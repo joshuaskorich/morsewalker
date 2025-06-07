@@ -274,17 +274,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Set currentMode to the saved or default mode
   currentMode = savedMode;
 
-  // Update basic stats on page load
-  if (yourCallsign.value !== '') {
-    fetch(`https://stats.${window.location.hostname}/api/submit`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mode: currentMode, callsign: yourCallsign.value }),
-    }).catch((error) => {
-      console.error('Failed to send CloudFlare stats.');
-    });
-  }
-
   // Reset state to ensure no leftover stations when loading
   resetGameState();
 
