@@ -371,13 +371,16 @@ export function getCallingStation(currentMode) {
 
   // determine if it's a US station
   let isUS = inputs.usOnly ? true : Math.random() < 0.4;
+  let isCA = !isUS && Math.random() < 0.3; // CA more likely during field day
+  let callsign = isUS
+    ? getRandomUSCallsign(inputs.formats)
+    : currentMode === 'fd' && isCA
+      ? getRandomCACallsign(inputs.formats)
+      : getRandomNonUSCallsign(inputs.formats)
+  isCA = prefixIn(callsign, CA_CALLSIGN_PREFIXES); // getRandomNonUSCallsign may have found CA
 
   return {
-    callsign: isUS
-      ? getRandomUSCallsign(inputs.formats)
-      : currentMode === 'fd'
-        ? getRandomCACallsign(inputs.formats)
-        : getRandomNonUSCallsign(inputs.formats),
+    callsign: callsign,
     wpm:
       Math.floor(Math.random() * (inputs.maxSpeed - inputs.minSpeed + 1)) +
       inputs.minSpeed,
@@ -392,7 +395,9 @@ export function getCallingStation(currentMode) {
     state: isUS ? randomElement(stateAbbreviations) : '',
     section: isUS
       ? randomElement(arrlSectionsUS)
-      : randomElement(arrlSectionsCA),
+      : isCA
+        ? randomElement(arrlSectionsCA)
+        : 'DX',
     klass:
       (Math.floor(Math.pow(Math.random(), 2) * 20) + 1).toString() +
       weightedRandomElement(fieldDayClassesWeighted),
@@ -407,6 +412,22 @@ export function getCallingStation(currentMode) {
     // QSB depth range: 0.6 to 1.0
     qsbDepth: Math.random() * 0.4 + 0.6,
   };
+}
+
+/**
+ * Checks whether a callsign starts with any of the prefixes in the list
+ *
+ * @param {string} callsign
+ * @param {string[]} prefixes
+ * @returns {boolean} True if callsign starts with any of the prefixes, false otherwise.
+ */
+function prefixIn(callsign, prefixList) {
+  for (let i = 0; i < prefixList.length; i++) {
+    if (callsign.startsWith(prefixList[i])) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /**
