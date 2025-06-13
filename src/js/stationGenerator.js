@@ -325,6 +325,21 @@ const names = [
   'William',
   'Yan',
 ];
+const AckWeighted = [
+  { value: '', weight: 10 },
+  { value: 'R ', weight: 60 },
+  { value: 'RR ', weight: 15 },
+  { value: 'QSL ', weight: 10 },
+  { value: 'X ', weight: 5 },
+];
+const ThanksWeighted = [
+  { value: '', weight: 10 },
+  { value: ' TU', weight: 50 },
+  { value: ' TNX', weight: 5 },
+  { value: ' GL', weight: 20 },
+  { value: ' 73', weight: 10 },
+  { value: ' 72', weight: 5 },
+];
 
 /**
  * Retrieves the current user's station configuration.
@@ -370,8 +385,12 @@ export function getCallingStation(currentMode) {
   if (inputs === null) return;
 
   // determine if it's a US station
-  let isUS = inputs.usOnly ? true : Math.random() < 0.4;
-  let isCA = !isUS && Math.random() < 0.3; // CA more likely during field day
+  let isUS = inputs.usOnly
+    ? true
+    : currentMode === 'fd'
+      ? Math.random() < 0.8 // Field Day is very US-weighted
+      : Math.random() < 0.4;
+  let isCA = !isUS && Math.random() < 0.3; // used only for FD; CA more likely than DX during field day
   let callsign = isUS
     ? getRandomUSCallsign(inputs.formats)
     : currentMode === 'fd' && isCA
@@ -398,6 +417,8 @@ export function getCallingStation(currentMode) {
       : isCA
         ? randomElement(arrlSectionsCA)
         : 'DX',
+    acknowledgement: weightedRandomElement(AckWeighted),
+    thanks: weightedRandomElement(ThanksWeighted),
     klass:
       (Math.floor(Math.pow(Math.random(), 2) * 20) + 1).toString() +
       weightedRandomElement(fieldDayClassesWeighted),
