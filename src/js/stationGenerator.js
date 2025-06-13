@@ -390,7 +390,7 @@ export function getCallingStation(currentMode) {
     : currentMode === 'fd'
       ? Math.random() < 0.8 // Field Day is very US-weighted
       : Math.random() < 0.4;
-  let isCA = !isUS && Math.random() < 0.15; // used only for FD; CA more likely than DX during field day
+  let isCA = !isUS && Math.random() < 0.3; // used only for FD; CA more likely than DX during field day
   let callsign = isUS
     ? getRandomUSCallsign(inputs.formats)
     : currentMode === 'fd' && isCA
