@@ -113,7 +113,7 @@ export const modeLogicConfig = {
     yourExchange: (yourStation, theirStation, arbitrary) =>
       `${yourStation.klass} ${yourStation.section}`,
     theirExchange: (yourStation, theirStation, arbitrary) =>
-      `R ${theirStation.klass} ${theirStation.section} TU`,
+      `${theirStation.acknowledgement}${theirStation.klass} ${theirStation.section}${theirStation.thanks}`,
     yourSignoff: (yourStation, theirStation, arbitrary) =>
       `TU ${yourStation.callsign}`,
     theirSignoff: null,
