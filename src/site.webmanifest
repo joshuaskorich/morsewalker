@@ -48,7 +48,7 @@
       "sizes": "any"
     }
   ],
-  "start_url": "/",
+  "start_url": "/morsewalker/",
   "background_color": "#fafafa",
   "theme_color": "#fafafa",
   "display": "standalone"
