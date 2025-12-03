@@ -507,6 +507,7 @@ export function addTableRow(
   callsign,
   wpm,
   attempts,
+  stations,
   totalTime,
   extra = null
 ) {
@@ -522,9 +523,10 @@ export function addTableRow(
   newRow.insertCell(1).textContent = callsign;
   newRow.insertCell(2).textContent = wpm;
   newRow.insertCell(3).textContent = attempts;
-  newRow.insertCell(4).textContent = totalTime.toFixed(2);
+  newRow.insertCell(4).textContent = stations;
+  newRow.insertCell(5).textContent = totalTime.toFixed(2);
   if (extra) {
-    newRow.insertCell(5).innerHTML = extra;
+    newRow.insertCell(6).innerHTML = extra;
   }
 
   // Update the summary row at the bottom

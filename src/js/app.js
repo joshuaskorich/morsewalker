@@ -710,6 +710,7 @@ function send() {
         currentStation.callsign,
         wpmString,
         currentStationAttempts,
+        currentStations.length,
         audioContext.currentTime - currentStationStartTime,
         '' // No additional info in single mode
       );
@@ -824,6 +825,7 @@ function tu() {
     currentStation.callsign,
     wpmString,
     currentStationAttempts,
+    currentStations.length,
     audioContext.currentTime - currentStationStartTime,
     extraInfo
   );
