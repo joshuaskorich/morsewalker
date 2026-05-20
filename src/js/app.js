@@ -440,7 +440,7 @@ function cq() {
 
   if (modeConfig.showTuStep) {
     // Contest-like modes: CQ adds more stations
-    addStations(currentStations, inputs);
+    addStations(currentStations, inputs, 1.0);
     respondWithAllStations(currentStations, yourResponseTimer);
     lastRespondingStations = currentStations;
   } else {
@@ -843,10 +843,7 @@ function tu() {
   infoField2.value = '';
   responseField.focus();
 
-  // Chance of a new station joining
-  if (Math.random() < 0.4) {
-    addStations(currentStations, inputs);
-  }
+  addStations(currentStations, inputs, 0.4);
 
   respondWithAllStations(currentStations, responseTimerToUse);
   lastRespondingStations = currentStations;
