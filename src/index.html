@@ -113,15 +113,28 @@
         </h1>
         <p class="fw-bold fst-italic">Walk before you run!</p>
       </div>
-      <button
-        type="button"
-        id="themeToggle"
-        class="btn btn-outline-secondary btn-sm ms-2"
-        aria-label="Toggle dark mode"
-        title="Toggle dark mode"
-      >
-        <i class="fa-solid fa-moon"></i>
-      </button>
+      <div class="d-flex align-items-center gap-2">
+        <button
+          type="button"
+          id="changelogButton"
+          class="btn btn-outline-secondary btn-sm"
+          data-bs-toggle="modal"
+          data-bs-target="#changelogModal"
+          aria-label="Changelog"
+          title="What's changed in this fork"
+        >
+          <i class="fa-solid fa-clock-rotate-left"></i>
+        </button>
+        <button
+          type="button"
+          id="themeToggle"
+          class="btn btn-outline-secondary btn-sm"
+          aria-label="Toggle dark mode"
+          title="Toggle dark mode"
+        >
+          <i class="fa-solid fa-moon"></i>
+        </button>
+      </div>
       <script>
         // Set the correct icon before Font Awesome's first scan so a dark-mode
         // visitor doesn't briefly see the moon icon before the bundle loads.
@@ -1074,6 +1087,86 @@
         >
           <button id="stopButton" class="btn btn-danger me-2 mb-2">Stop</button>
           <button id="resetButton" class="btn btn-secondary mb-2">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Changelog Modal -->
+    <div
+      class="modal fade"
+      id="changelogModal"
+      tabindex="-1"
+      aria-labelledby="changelogModalLabel"
+    >
+      <div class="modal-dialog modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title" id="changelogModalLabel">About This Fork</h3>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p>
+              This is a fork of
+              <a href="https://github.com/sc0tfree/morsewalker"
+                >Morse Walker</a
+              >, originally created by
+              <a href="https://www.qrz.com/db/W6NYC">W6NYC</a> (<a
+                href="https://github.com/sc0tfree"
+                >sc0tfree</a
+              >). It bundles changes from several contributors on top of that
+              root repository.
+            </p>
+
+            <h6 class="mt-4">Changes included in this fork</h6>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                <strong>NT5F</strong> (<a
+                  href="https://github.com/joshuaskorich/morsewalker"
+                  >joshuaskorich</a
+                >)
+                <ul class="mb-0">
+                  <li>Dark mode with a header toggle and saved preference</li>
+                  <li>Header and footer cleanup</li>
+                </ul>
+              </li>
+              <li class="list-group-item">
+                <strong>mkj</strong> (<a
+                  href="https://github.com/johnsonm/morsewalker"
+                  >johnsonm</a
+                >)
+                <ul class="mb-0">
+                  <li>
+                    Field Day mode (US/Canada/DX, exchange &amp; location
+                    weighting)
+                  </li>
+                  <li>Pileup size shown in the results table</li>
+                  <li>Minimum responding stations setting</li>
+                  <li>PWA support fix</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+          <div class="modal-footer">
+            <a
+              href="https://github.com/sc0tfree/morsewalker"
+              class="btn btn-outline-primary btn-sm"
+              target="_blank"
+              rel="noopener"
+              >Root repository</a
+            >
+            <button
+              type="button"
+              class="btn btn-secondary btn-sm"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
         </div>
       </div>
     </div>
