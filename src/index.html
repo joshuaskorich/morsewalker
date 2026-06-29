@@ -74,6 +74,25 @@
     <!-- Theme Colors -->
     <meta name="theme-color" content="#fafafa" />
     <meta name="msapplication-TileColor" content="#fafafa" />
+
+    <!-- Resolve theme before first paint to avoid a flash of the wrong theme -->
+    <script>
+      (function () {
+        var stored = localStorage.getItem('theme');
+        var theme =
+          stored ||
+          (window.matchMedia &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches
+            ? 'dark'
+            : 'light');
+        document.documentElement.setAttribute('data-bs-theme', theme);
+        var color = theme === 'dark' ? '#212529' : '#fafafa';
+        var metas = document.querySelectorAll('meta[name="theme-color"]');
+        for (var i = 0; i < metas.length; i++) {
+          metas[i].setAttribute('content', color);
+        }
+      })();
+    </script>
   </head>
 
   <body class="container py-4">
