@@ -249,6 +249,8 @@ document.addEventListener('DOMContentLoaded', () => {
     yourCallsign: 'yourCallsign',
     yourName: 'yourName',
     yourState: 'yourState', // Added yourState
+    yourSection: 'yourSection',
+    yourClass: 'yourClass',
     yourSpeed: 'yourSpeed',
     yourSidetone: 'yourSidetone',
     yourVolume: 'yourVolume',
@@ -265,6 +267,9 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.getItem(keys.yourCallsign) || yourCallsign.value;
   yourName.value = localStorage.getItem(keys.yourName) || yourName.value;
   yourState.value = localStorage.getItem(keys.yourState) || yourState.value; // Load yourState
+  yourSection.value =
+    localStorage.getItem(keys.yourSection) || yourSection.value;
+  yourClass.value = localStorage.getItem(keys.yourClass) || yourClass.value;
   yourSpeed.value = localStorage.getItem(keys.yourSpeed) || yourSpeed.value;
   yourSidetone.value =
     localStorage.getItem(keys.yourSidetone) || yourSidetone.value;
@@ -280,6 +285,12 @@ document.addEventListener('DOMContentLoaded', () => {
   yourState.addEventListener('input', () => {
     // Save yourState
     localStorage.setItem(keys.yourState, yourState.value);
+  });
+  yourSection.addEventListener('input', () => {
+    localStorage.setItem(keys.yourSection, yourSection.value);
+  });
+  yourClass.addEventListener('input', () => {
+    localStorage.setItem(keys.yourClass, yourClass.value);
   });
   yourSpeed.addEventListener('input', () => {
     localStorage.setItem(keys.yourSpeed, yourSpeed.value);
@@ -310,17 +321,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Set currentMode to the saved or default mode
   currentMode = savedMode;
 
-  // Update basic stats on page load
-  if (yourCallsign.value !== '') {
-    fetch(`https://stats.${window.location.hostname}/api/submit`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mode: currentMode, callsign: yourCallsign.value }),
-    }).catch((error) => {
-      console.error('Failed to send CloudFlare stats.');
-    });
-  }
-
   // Reset state to ensure no leftover stations when loading
   resetGameState();
 
@@ -338,6 +338,17 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 function getModeConfig() {
   return modeLogicConfig[currentMode];
+}
+
+/**
+ * Retrieves the current mode
+ *
+ * Returns the string value of the current mode
+ *
+ * @returns {string} currnet mode.
+ */
+export function getCurrentMode() {
+  return currentMode;
 }
 
 /**
@@ -476,7 +487,7 @@ function cq() {
 
   if (modeConfig.showTuStep) {
     // Contest-like modes: CQ adds more stations
-    addStations(currentStations, inputs);
+    addStations(currentStations, inputs, 1.0);
     respondWithAllStations(currentStations, yourResponseTimer);
     lastRespondingStations = currentStations;
   } else {
@@ -746,6 +757,7 @@ function send() {
         currentStation.callsign,
         wpmString,
         currentStationAttempts,
+        currentStations.length,
         audioContext.currentTime - currentStationStartTime,
         '' // No additional info in single mode
       );
@@ -860,6 +872,7 @@ function tu() {
     currentStation.callsign,
     wpmString,
     currentStationAttempts,
+    currentStations.length,
     audioContext.currentTime - currentStationStartTime,
     extraInfo
   );
@@ -877,10 +890,7 @@ function tu() {
   infoField2.value = '';
   responseField.focus();
 
-  // Chance of a new station joining
-  if (Math.random() < 0.4) {
-    addStations(currentStations, inputs);
-  }
+  addStations(currentStations, inputs, 0.4);
 
   respondWithAllStations(currentStations, responseTimerToUse);
   lastRespondingStations = currentStations;
@@ -959,7 +969,7 @@ function nextSingleStation(responseStartTime) {
   const responseField = document.getElementById('responseField');
   const cqButton = document.getElementById('cqButton');
 
-  let callingStation = getCallingStation();
+  let callingStation = getCallingStation(currentMode);
   printStation(callingStation);
   currentStation = callingStation;
   currentStationAttempts = 0;

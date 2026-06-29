@@ -36,10 +36,16 @@ function getDOMInputs() {
       .toUpperCase(),
     yourName: document.getElementById('yourName').value.trim(),
     yourState: document.getElementById('yourState').value.trim().toUpperCase(), // Convert to uppercase for consistency
+    yourSection: document
+      .getElementById('yourSection')
+      .value.trim()
+      .toUpperCase(),
+    yourClass: document.getElementById('yourClass').value.trim().toUpperCase(),
     yourSpeed: parseInt(document.getElementById('yourSpeed').value, 10),
     yourSidetone: parseInt(document.getElementById('yourSidetone').value, 10),
     // convert volume to a float between 0 and 1
     yourVolume: parseFloat(document.getElementById('yourVolume').value) / 100,
+    minStations: parseInt(document.getElementById('minStations').value, 10),
     maxStations: parseInt(document.getElementById('maxStations').value, 10),
     minSpeed: parseInt(document.getElementById('minSpeed').value, 10),
     maxSpeed: parseInt(document.getElementById('maxSpeed').value, 10),
@@ -112,6 +118,19 @@ function validateInputs(inputs) {
   }
   if (!inputs.yourState && inputs.mode === 'sst') {
     markFieldInvalid('yourState', 'Your state is required for SST mode.');
+    openAccordionSection('collapseYourStationSettings');
+    isValid = false;
+  }
+  if (!inputs.yourSection && inputs.mode === 'fd') {
+    markFieldInvalid(
+      'yourSection',
+      'Your section is required for Field Day mode.'
+    );
+    openAccordionSection('collapseYourStationSettings');
+    isValid = false;
+  }
+  if (!inputs.yourClass && inputs.mode === 'fd') {
+    markFieldInvalid('yourClass', 'Your class is required for Field Day mode.');
     openAccordionSection('collapseYourStationSettings');
     isValid = false;
   }
