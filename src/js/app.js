@@ -132,7 +132,11 @@ document.addEventListener('DOMContentLoaded', () => {
         ? 'light'
         : 'dark';
     setTheme(next);
-    localStorage.setItem('theme', next);
+    try {
+      localStorage.setItem('theme', next);
+    } catch (e) {
+      // Storage can be blocked; the theme still applies for this session.
+    }
   });
 
   modeRadios.forEach((radio) => {

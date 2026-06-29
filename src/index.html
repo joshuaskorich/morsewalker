@@ -78,7 +78,12 @@
     <!-- Resolve theme before first paint to avoid a flash of the wrong theme -->
     <script>
       (function () {
-        var stored = localStorage.getItem('theme');
+        var stored = null;
+        try {
+          stored = localStorage.getItem('theme');
+        } catch (e) {
+          // Storage can be blocked (private mode, sandboxed contexts); fall back to OS.
+        }
         var theme =
           stored ||
           (window.matchMedia &&
@@ -115,6 +120,16 @@
         >
           <i class="fa-solid fa-moon"></i>
         </button>
+        <script>
+          // Set the correct icon before Font Awesome's first scan so a dark-mode
+          // visitor doesn't briefly see the moon icon before the bundle loads.
+          if (
+            document.documentElement.getAttribute('data-bs-theme') === 'dark'
+          ) {
+            document.getElementById('themeToggle').innerHTML =
+              '<i class="fa-solid fa-sun"></i>';
+          }
+        </script>
         <p class="fw-bold fst-italic">Walk before you run!</p>
       </div>
       <div class="alert alert-dismissible alert-danger" style="max-width: 35em">
