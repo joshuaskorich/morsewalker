@@ -81,6 +81,14 @@ function getDOMInputs() {
       ? document.getElementById('enableCutNumbers').checked
       : false,
     cutNumbers: getSelectedCutNumbers(),
+
+    // Character Recognition inputs
+    charLetters: document.getElementById('charLetters').checked,
+    charNumbers: document.getElementById('charNumbers').checked,
+    charPunctuation: document.getElementById('charPunctuation').checked,
+    charProsigns: document.getElementById('charProsigns').checked,
+    minChars: parseInt(document.getElementById('minChars').value, 10),
+    maxChars: parseInt(document.getElementById('maxChars').value, 10),
   };
 }
 
@@ -165,6 +173,35 @@ function validateInputs(inputs) {
     );
     openAccordionSection('collapseRespondingStationSettings');
     isValid = false;
+  }
+
+  if (inputs.mode === 'char') {
+    if (
+      !inputs.charLetters &&
+      !inputs.charNumbers &&
+      !inputs.charPunctuation &&
+      !inputs.charProsigns
+    ) {
+      markFieldInvalid(
+        'minChars',
+        'Enable at least one character set (Letters, Numbers, Punctuation, or Prosigns).'
+      );
+      openAccordionSection('collapseCharRecognition');
+      isValid = false;
+    }
+    if (isNaN(inputs.minChars) || inputs.minChars < 1) {
+      markFieldInvalid('minChars', 'Minimum Characters must be at least 1.');
+      openAccordionSection('collapseCharRecognition');
+      isValid = false;
+    }
+    if (inputs.minChars > inputs.maxChars) {
+      markFieldInvalid(
+        'minChars',
+        'Minimum Characters cannot be greater than Maximum Characters!'
+      );
+      openAccordionSection('collapseCharRecognition');
+      isValid = false;
+    }
   }
 
   return isValid;
