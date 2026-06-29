@@ -317,7 +317,7 @@ export function createMorsePlayer(station, volumeOverride = null) {
    */
   function playSentence(sentence, startTime = context.currentTime) {
     // Uncomment the following line to log the sentence being played (for debugging)
-    // console.log(`/ Playing sentence: ${sentence}`);
+    console.log(`/ Playing sentence: ${sentence}`);
 
     let time = startTime;
     const tokens = tokenize(sentence);
@@ -393,7 +393,7 @@ export function createBackgroundStatic() {
   console.log(`/ Initializing background static for QRN level ${selectedQRN}`);
 
   const context = backgroundStaticContext;
-  const staticUrl = '../audio/static.mp3';
+  const staticUrl = 'https://morsewalker.com/audio/static.mp3';
 
   // Fetch and decode the audio file
   fetch(staticUrl)

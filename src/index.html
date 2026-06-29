@@ -74,6 +74,30 @@
     <!-- Theme Colors -->
     <meta name="theme-color" content="#fafafa" />
     <meta name="msapplication-TileColor" content="#fafafa" />
+
+    <!-- Resolve theme before first paint to avoid a flash of the wrong theme -->
+    <script>
+      (function () {
+        var stored = null;
+        try {
+          stored = localStorage.getItem('theme');
+        } catch (e) {
+          // Storage can be blocked (private mode, sandboxed contexts); fall back to OS.
+        }
+        var theme =
+          stored ||
+          (window.matchMedia &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches
+            ? 'dark'
+            : 'light');
+        document.documentElement.setAttribute('data-bs-theme', theme);
+        var color = theme === 'dark' ? '#212529' : '#fafafa';
+        var metas = document.querySelectorAll('meta[name="theme-color"]');
+        for (var i = 0; i < metas.length; i++) {
+          metas[i].setAttribute('content', color);
+        }
+      })();
+    </script>
   </head>
 
   <body class="container py-4">
@@ -89,22 +113,36 @@
         </h1>
         <p class="fw-bold fst-italic">Walk before you run!</p>
       </div>
-      <div class="alert alert-dismissible alert-danger" style="max-width: 35em">
+      <div class="d-flex align-items-center gap-2">
         <button
           type="button"
-          class="btn-close"
-          data-bs-dismiss="alert"
-        ></button>
-        Morse Walker is currently in <strong>beta</strong> and
-        <i>your feedback is invaluable!</i><br />
-        <a
-          href="https://github.com/sc0tfree/morsewalker/issues/new/choose"
-          class="alert-link"
-          >Submit an issue</a
+          id="changelogButton"
+          class="btn btn-outline-secondary btn-sm"
+          data-bs-toggle="modal"
+          data-bs-target="#changelogModal"
+          aria-label="Changelog"
+          title="What's changed in this fork"
         >
-        for bugs or feature requests, or
-        <a href="mailto:henry@w6nyc.com" class="alert-link">email me</a>.
+          <i class="fa-solid fa-clock-rotate-left"></i>
+        </button>
+        <button
+          type="button"
+          id="themeToggle"
+          class="btn btn-outline-secondary btn-sm"
+          aria-label="Toggle dark mode"
+          title="Toggle dark mode"
+        >
+          <i class="fa-solid fa-moon"></i>
+        </button>
       </div>
+      <script>
+        // Set the correct icon before Font Awesome's first scan so a dark-mode
+        // visitor doesn't briefly see the moon icon before the bundle loads.
+        if (document.documentElement.getAttribute('data-bs-theme') === 'dark') {
+          document.getElementById('themeToggle').innerHTML =
+            '<i class="fa-solid fa-sun"></i>';
+        }
+      </script>
     </div>
 
     <hr />
@@ -160,6 +198,19 @@
             class="btn btn-outline-primary d-flex align-items-center justify-content-center"
             for="modePota"
             >POTA Activator</label
+          >
+          <input
+            type="radio"
+            class="btn-check"
+            name="mode"
+            id="modeFieldDay"
+            value="fd"
+            autocomplete="off"
+          />
+          <label
+            class="btn btn-outline-primary d-flex align-items-center justify-content-center"
+            for="modeFieldDay"
+            >Field Day</label
           >
 
           <input
@@ -266,7 +317,6 @@
                   />
                   <div class="invalid-feedback"></div>
                 </div>
-
                 <div class="col-6 col-md-4 col-lg-2">
                   <label for="yourSpeed" class="form-label">Speed (WPM)</label>
                   <input
@@ -313,6 +363,38 @@
                     required
                   />
                 </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                  <label for="yourSection" class="form-label">Section</label>
+                  <input
+                    type="text"
+                    id="yourSection"
+                    name="section"
+                    class="form-control"
+                    maxlength="3"
+                    placeholder="(e.g., CA, TX, STX, LAX)"
+                    autocomplete="off"
+                    autocapitalize="characters"
+                    spellcheck="false"
+                    autocorrect="off"
+                  />
+                  <div class="invalid-feedback"></div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                  <label for="yourClass" class="form-label">Class (FD)</label>
+                  <input
+                    type="text"
+                    id="yourClass"
+                    name="klass"
+                    class="form-control"
+                    maxlength="4"
+                    placeholder="(e.g., 3A, 2B, 1BB)"
+                    autocomplete="off"
+                    autocapitalize="characters"
+                    spellcheck="false"
+                    autocorrect="off"
+                  />
+                  <div class="invalid-feedback"></div>
+                </div>
               </div>
             </div>
           </div>
@@ -343,6 +425,24 @@
             <div class="container">
               <!-- Farnsworth Row -->
               <div class="row g-3 align-items-end">
+                <!-- Min Stations -->
+                <div class="col-12 col-md-4 col-lg">
+                  <label for="minStations" class="form-label"
+                    >Minimum Stations</label
+                  >
+                  <input
+                    type="number"
+                    id="minStations"
+                    name="minStations"
+                    class="form-control"
+                    value="0"
+                    min="0"
+                    max="100"
+                    step="1"
+                    required
+                  />
+                </div>
+
                 <!-- Max Stations -->
                 <div class="col-12 col-md-4 col-lg">
                   <label for="maxStations" class="form-label"
@@ -991,6 +1091,86 @@
       </div>
     </div>
 
+    <!-- Changelog Modal -->
+    <div
+      class="modal fade"
+      id="changelogModal"
+      tabindex="-1"
+      aria-labelledby="changelogModalLabel"
+    >
+      <div class="modal-dialog modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title" id="changelogModalLabel">About This Fork</h3>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p>
+              This is a fork of
+              <a href="https://github.com/sc0tfree/morsewalker"
+                >Morse Walker</a
+              >, originally created by
+              <a href="https://www.qrz.com/db/W6NYC">W6NYC</a> (<a
+                href="https://github.com/sc0tfree"
+                >sc0tfree</a
+              >). It bundles changes from several contributors on top of that
+              root repository.
+            </p>
+
+            <h6 class="mt-4">Changes included in this fork</h6>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                <strong>NT5F</strong> (<a
+                  href="https://github.com/joshuaskorich/morsewalker"
+                  >joshuaskorich</a
+                >)
+                <ul class="mb-0">
+                  <li>Dark mode with a header toggle and saved preference</li>
+                  <li>Header and footer cleanup</li>
+                </ul>
+              </li>
+              <li class="list-group-item">
+                <strong>mkj</strong> (<a
+                  href="https://github.com/johnsonm/morsewalker"
+                  >johnsonm</a
+                >)
+                <ul class="mb-0">
+                  <li>
+                    Field Day mode (US/Canada/DX, exchange &amp; location
+                    weighting)
+                  </li>
+                  <li>Pileup size shown in the results table</li>
+                  <li>Minimum responding stations setting</li>
+                  <li>PWA support fix</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+          <div class="modal-footer">
+            <a
+              href="https://github.com/sc0tfree/morsewalker"
+              class="btn btn-outline-primary btn-sm"
+              target="_blank"
+              rel="noopener"
+              >Root repository</a
+            >
+            <button
+              type="button"
+              class="btn btn-secondary btn-sm"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Help Modal -->
     <div
       class="modal fade"
@@ -1207,6 +1387,7 @@
           <th>Callsign</th>
           <th>WPM</th>
           <th>Attempts</th>
+          <th>Stations</th>
           <th>Total Time</th>
           <th class="mode-specific-column">Additional Info</th>
         </tr>
@@ -1219,18 +1400,21 @@
     <!-- Footer -->
     <footer class="bg-dark text-white text-center py-2 fixed-bottom">
       <span>
-        Crafted with <i class="fas fa-coffee text-warning"></i> and
-        <i class="fas fa-broadcast-tower text-primary"></i> by
-        <a href="https://www.qrz.com/db/W6NYC"><strong>W6NYC</strong></a
+        A fork by
+        <a href="https://www.qrz.com/db/NT5F"><strong>NT5F</strong></a
+        >,
+        <a
+          href="https://github.com/joshuaskorich/morsewalker"
+          class="text-primary"
+          >hosted on GitHub</a
         >.
         <span class="d-none d-md-inline">
-          Check out
-          <a
-            href="https://github.com/sc0tfree/morsewalker"
-            class="text-primary"
+          Forked from the
+          <a href="https://github.com/sc0tfree/morsewalker" class="text-primary"
+            >original</a
           >
-            the source code</a
-          >!
+          by <a href="https://www.qrz.com/db/W6NYC"><strong>W6NYC</strong></a
+          >.
         </span>
       </span>
     </footer>

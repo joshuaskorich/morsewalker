@@ -63,6 +63,36 @@ let lastRespondingStations = null;
 const farnsworthLowerBy = 6;
 
 /**
+ * Applies a theme ('dark' or 'light') across the UI.
+ *
+ * - Sets the `data-bs-theme` attribute Bootstrap uses to recolor components.
+ * - Swaps the toggle button icon (moon while light, sun while dark) and aria-label.
+ * - Keeps the browser `theme-color` meta tags in sync with the active theme.
+ */
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-bs-theme', theme);
+
+  const toggle = document.getElementById('themeToggle');
+  if (toggle) {
+    toggle.innerHTML =
+      theme === 'dark'
+        ? '<i class="fa-solid fa-sun"></i>'
+        : '<i class="fa-solid fa-moon"></i>';
+    toggle.setAttribute(
+      'aria-label',
+      theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
+    );
+  }
+
+  const color = theme === 'dark' ? '#212529' : '#fafafa';
+  document
+    .querySelectorAll(
+      'meta[name="theme-color"], meta[name="msapplication-TileColor"]'
+    )
+    .forEach((meta) => meta.setAttribute('content', color));
+}
+
+/**
  * Event listener setup.
  *
  * - Adds click and change event listeners to UI elements like buttons and checkboxes.
@@ -85,6 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const yourSpeed = document.getElementById('yourSpeed');
   const yourSidetone = document.getElementById('yourSidetone');
   const yourVolume = document.getElementById('yourVolume');
+  const themeToggle = document.getElementById('themeToggle');
 
   // Event Listeners
   cqButton.addEventListener('click', cq);
@@ -92,6 +123,22 @@ document.addEventListener('DOMContentLoaded', () => {
   tuButton.addEventListener('click', tu);
   resetButton.addEventListener('click', reset);
   stopButton.addEventListener('click', stop);
+
+  // Theme toggle: sync icon/meta to the theme resolved in <head>, then toggle on click
+  setTheme(document.documentElement.getAttribute('data-bs-theme') || 'light');
+  themeToggle.addEventListener('click', () => {
+    const next =
+      document.documentElement.getAttribute('data-bs-theme') === 'dark'
+        ? 'light'
+        : 'dark';
+    setTheme(next);
+    try {
+      localStorage.setItem('theme', next);
+    } catch (e) {
+      // Storage can be blocked; the theme still applies for this session.
+    }
+  });
+
   modeRadios.forEach((radio) => {
     radio.addEventListener('change', changeMode);
   });
@@ -202,6 +249,8 @@ document.addEventListener('DOMContentLoaded', () => {
     yourCallsign: 'yourCallsign',
     yourName: 'yourName',
     yourState: 'yourState', // Added yourState
+    yourSection: 'yourSection',
+    yourClass: 'yourClass',
     yourSpeed: 'yourSpeed',
     yourSidetone: 'yourSidetone',
     yourVolume: 'yourVolume',
@@ -218,6 +267,9 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.getItem(keys.yourCallsign) || yourCallsign.value;
   yourName.value = localStorage.getItem(keys.yourName) || yourName.value;
   yourState.value = localStorage.getItem(keys.yourState) || yourState.value; // Load yourState
+  yourSection.value =
+    localStorage.getItem(keys.yourSection) || yourSection.value;
+  yourClass.value = localStorage.getItem(keys.yourClass) || yourClass.value;
   yourSpeed.value = localStorage.getItem(keys.yourSpeed) || yourSpeed.value;
   yourSidetone.value =
     localStorage.getItem(keys.yourSidetone) || yourSidetone.value;
@@ -233,6 +285,12 @@ document.addEventListener('DOMContentLoaded', () => {
   yourState.addEventListener('input', () => {
     // Save yourState
     localStorage.setItem(keys.yourState, yourState.value);
+  });
+  yourSection.addEventListener('input', () => {
+    localStorage.setItem(keys.yourSection, yourSection.value);
+  });
+  yourClass.addEventListener('input', () => {
+    localStorage.setItem(keys.yourClass, yourClass.value);
   });
   yourSpeed.addEventListener('input', () => {
     localStorage.setItem(keys.yourSpeed, yourSpeed.value);
@@ -263,17 +321,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Set currentMode to the saved or default mode
   currentMode = savedMode;
 
-  // Update basic stats on page load
-  if (yourCallsign.value !== '') {
-    fetch(`https://stats.${window.location.hostname}/api/submit`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mode: currentMode, callsign: yourCallsign.value }),
-    }).catch((error) => {
-      console.error('Failed to send CloudFlare stats.');
-    });
-  }
-
   // Reset state to ensure no leftover stations when loading
   resetGameState();
 
@@ -291,6 +338,17 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 function getModeConfig() {
   return modeLogicConfig[currentMode];
+}
+
+/**
+ * Retrieves the current mode
+ *
+ * Returns the string value of the current mode
+ *
+ * @returns {string} currnet mode.
+ */
+export function getCurrentMode() {
+  return currentMode;
 }
 
 /**
@@ -429,7 +487,7 @@ function cq() {
 
   if (modeConfig.showTuStep) {
     // Contest-like modes: CQ adds more stations
-    addStations(currentStations, inputs);
+    addStations(currentStations, inputs, 1.0);
     respondWithAllStations(currentStations, yourResponseTimer);
     lastRespondingStations = currentStations;
   } else {
@@ -699,6 +757,7 @@ function send() {
         currentStation.callsign,
         wpmString,
         currentStationAttempts,
+        currentStations.length,
         audioContext.currentTime - currentStationStartTime,
         '' // No additional info in single mode
       );
@@ -813,6 +872,7 @@ function tu() {
     currentStation.callsign,
     wpmString,
     currentStationAttempts,
+    currentStations.length,
     audioContext.currentTime - currentStationStartTime,
     extraInfo
   );
@@ -830,10 +890,7 @@ function tu() {
   infoField2.value = '';
   responseField.focus();
 
-  // Chance of a new station joining
-  if (Math.random() < 0.4) {
-    addStations(currentStations, inputs);
-  }
+  addStations(currentStations, inputs, 0.4);
 
   respondWithAllStations(currentStations, responseTimerToUse);
   lastRespondingStations = currentStations;
@@ -912,7 +969,7 @@ function nextSingleStation(responseStartTime) {
   const responseField = document.getElementById('responseField');
   const cqButton = document.getElementById('cqButton');
 
-  let callingStation = getCallingStation();
+  let callingStation = getCallingStation(currentMode);
   printStation(callingStation);
   currentStation = callingStation;
   currentStationAttempts = 0;
