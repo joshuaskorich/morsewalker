@@ -240,6 +240,20 @@
             for="modeSst"
             >K1USN SST</label
           >
+
+          <input
+            type="radio"
+            class="btn-check"
+            name="mode"
+            id="modeChar"
+            value="char"
+            autocomplete="off"
+          />
+          <label
+            class="btn btn-outline-primary d-flex align-items-center justify-content-center"
+            for="modeChar"
+            >Char Recognition</label
+          >
         </div>
       </div>
     </div>
@@ -996,6 +1010,130 @@
           </div>
         </div>
       </div>
+
+      <!-- Character Recognition Settings (shown only in char mode) -->
+      <div
+        class="accordion-item"
+        id="charRecognitionSettings"
+        style="display: none"
+      >
+        <h2 class="accordion-header" id="headingCharRecognition">
+          <button
+            class="accordion-button collapsed"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapseCharRecognition"
+            aria-expanded="false"
+            aria-controls="collapseCharRecognition"
+          >
+            <h5>Character Recognition Settings</h5>
+          </button>
+        </h2>
+        <div
+          id="collapseCharRecognition"
+          class="accordion-collapse collapse"
+          aria-labelledby="headingCharRecognition"
+          data-bs-parent="#accordionExample"
+        >
+          <div class="accordion-body">
+            <div class="container">
+              <div class="row g-3 align-items-end">
+                <div class="col-12">
+                  <label class="form-label">Character Sets</label>
+                  <div
+                    class="btn-group w-100 flex-wrap"
+                    role="group"
+                    aria-label="Character Sets"
+                  >
+                    <input
+                      type="checkbox"
+                      class="btn-check"
+                      id="charLetters"
+                      autocomplete="off"
+                      checked
+                    />
+                    <label class="btn btn-outline-primary" for="charLetters"
+                      >Letters</label
+                    >
+
+                    <input
+                      type="checkbox"
+                      class="btn-check"
+                      id="charNumbers"
+                      autocomplete="off"
+                      checked
+                    />
+                    <label class="btn btn-outline-primary" for="charNumbers"
+                      >Numbers</label
+                    >
+
+                    <input
+                      type="checkbox"
+                      class="btn-check"
+                      id="charPunctuation"
+                      autocomplete="off"
+                    />
+                    <label class="btn btn-outline-primary" for="charPunctuation"
+                      >Punctuation</label
+                    >
+
+                    <input
+                      type="checkbox"
+                      class="btn-check"
+                      id="charProsigns"
+                      autocomplete="off"
+                    />
+                    <label class="btn btn-outline-primary" for="charProsigns"
+                      >Prosigns</label
+                    >
+                  </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label for="minChars" class="form-label"
+                    >Minimum Characters</label
+                  >
+                  <input
+                    type="number"
+                    id="minChars"
+                    name="minChars"
+                    class="form-control"
+                    value="1"
+                    min="1"
+                    max="10"
+                    step="1"
+                    required
+                  />
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label for="maxChars" class="form-label"
+                    >Maximum Characters</label
+                  >
+                  <input
+                    type="number"
+                    id="maxChars"
+                    name="maxChars"
+                    class="form-control"
+                    value="5"
+                    min="1"
+                    max="10"
+                    step="1"
+                    required
+                  />
+                </div>
+
+                <div class="col-12">
+                  <small class="text-muted"
+                    >Prosigns play run-together and are typed as plain letter
+                    pairs (BK, AR, SK, KN, BT).</small
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <hr />
@@ -1101,7 +1239,9 @@
       <div class="modal-dialog modal-dialog-scrollable" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h3 class="modal-title" id="changelogModalLabel">About This Fork</h3>
+            <h3 class="modal-title" id="changelogModalLabel">
+              About This Fork
+            </h3>
             <button
               type="button"
               class="btn-close"
@@ -1112,8 +1252,7 @@
           <div class="modal-body">
             <p>
               This is a fork of
-              <a href="https://github.com/sc0tfree/morsewalker"
-                >Morse Walker</a
+              <a href="https://github.com/sc0tfree/morsewalker">Morse Walker</a
               >, originally created by
               <a href="https://www.qrz.com/db/W6NYC">W6NYC</a> (<a
                 href="https://github.com/sc0tfree"
@@ -1384,7 +1523,7 @@
       <thead>
         <tr>
           <th>#</th>
-          <th>Callsign</th>
+          <th id="resultsIdentifierHeader">Callsign</th>
           <th>WPM</th>
           <th>Attempts</th>
           <th>Stations</th>

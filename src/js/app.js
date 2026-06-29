@@ -405,6 +405,17 @@ function applyModeSettings(mode) {
   extraColumnHeaders.forEach((header) => {
     header.textContent = config.extraColumnHeader || 'Additional Info';
   });
+
+  // Character Recognition: show its settings panel and relabel the identifier
+  // column only in char mode.
+  const charSettings = document.getElementById('charRecognitionSettings');
+  if (charSettings) {
+    charSettings.style.display = mode === 'char' ? 'block' : 'none';
+  }
+  const identifierHeader = document.getElementById('resultsIdentifierHeader');
+  if (identifierHeader) {
+    identifierHeader.textContent = mode === 'char' ? 'String' : 'Callsign';
+  }
 }
 
 /**

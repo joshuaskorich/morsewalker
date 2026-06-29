@@ -63,6 +63,16 @@ export const modeUIConfig = {
     extraColumnHeader: 'Additional Info',
     resultsHeader: 'CWT Mode Results',
   },
+  char: {
+    showTuButton: false,
+    showInfoField: false,
+    infoFieldPlaceholder: '',
+    showInfoField2: false,
+    infoField2Placeholder: '',
+    tableExtraColumn: true,
+    extraColumnHeader: 'Your Answer',
+    resultsHeader: 'Character Recognition Results',
+  },
 };
 
 /**
@@ -173,5 +183,18 @@ export const modeLogicConfig = {
     modeName: 'CWT',
     extraInfoFieldKey: 'name',
     extraInfoFieldKey2: 'cwopsNumber',
+  },
+  char: {
+    cqMessage: () => '',
+    yourExchange: () => '',
+    theirExchange: () => '',
+    yourSignoff: () => '',
+    theirSignoff: () => '',
+    requiresInfoField: false,
+    requiresInfoField2: false,
+    showTuStep: false,
+    modeName: 'Character Recognition',
+    extraInfoFieldKey: null,
+    extraInfoFieldKey2: null,
   },
 };
