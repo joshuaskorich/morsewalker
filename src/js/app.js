@@ -63,6 +63,36 @@ let lastRespondingStations = null;
 const farnsworthLowerBy = 6;
 
 /**
+ * Applies a theme ('dark' or 'light') across the UI.
+ *
+ * - Sets the `data-bs-theme` attribute Bootstrap uses to recolor components.
+ * - Swaps the toggle button icon (moon while light, sun while dark) and aria-label.
+ * - Keeps the browser `theme-color` meta tags in sync with the active theme.
+ */
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-bs-theme', theme);
+
+  const toggle = document.getElementById('themeToggle');
+  if (toggle) {
+    toggle.innerHTML =
+      theme === 'dark'
+        ? '<i class="fa-solid fa-sun"></i>'
+        : '<i class="fa-solid fa-moon"></i>';
+    toggle.setAttribute(
+      'aria-label',
+      theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
+    );
+  }
+
+  const color = theme === 'dark' ? '#212529' : '#fafafa';
+  document
+    .querySelectorAll(
+      'meta[name="theme-color"], meta[name="msapplication-TileColor"]'
+    )
+    .forEach((meta) => meta.setAttribute('content', color));
+}
+
+/**
  * Event listener setup.
  *
  * - Adds click and change event listeners to UI elements like buttons and checkboxes.
@@ -85,6 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const yourSpeed = document.getElementById('yourSpeed');
   const yourSidetone = document.getElementById('yourSidetone');
   const yourVolume = document.getElementById('yourVolume');
+  const themeToggle = document.getElementById('themeToggle');
 
   // Event Listeners
   cqButton.addEventListener('click', cq);
@@ -92,6 +123,18 @@ document.addEventListener('DOMContentLoaded', () => {
   tuButton.addEventListener('click', tu);
   resetButton.addEventListener('click', reset);
   stopButton.addEventListener('click', stop);
+
+  // Theme toggle: sync icon/meta to the theme resolved in <head>, then toggle on click
+  setTheme(document.documentElement.getAttribute('data-bs-theme') || 'light');
+  themeToggle.addEventListener('click', () => {
+    const next =
+      document.documentElement.getAttribute('data-bs-theme') === 'dark'
+        ? 'light'
+        : 'dark';
+    setTheme(next);
+    localStorage.setItem('theme', next);
+  });
+
   modeRadios.forEach((radio) => {
     radio.addEventListener('change', changeMode);
   });
