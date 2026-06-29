@@ -28,12 +28,7 @@ const US_CALLSIGN_PREFIXES_WEIGHTED = [
   { value: 'AL', weight: 1 }, // 1%
 ];
 
-const CA_CALLSIGN_PREFIXES = [
-  'VE',
-  'VA',
-  'VO',
-  'VY',
-];
+const CA_CALLSIGN_PREFIXES = ['VE', 'VA', 'VO', 'VY'];
 const NON_US_CALLSIGN_PREFIXES = [
   '9A',
   'CT',
@@ -393,7 +388,7 @@ export function getCallingStation(currentMode) {
     ? getRandomUSCallsign(inputs.formats)
     : currentMode === 'fd' && isCA
       ? getRandomCACallsign(inputs.formats)
-      : getRandomNonUSCallsign(inputs.formats)
+      : getRandomNonUSCallsign(inputs.formats);
   isCA = prefixIn(callsign, CA_CALLSIGN_PREFIXES); // getRandomNonUSCallsign may have found CA
 
   return {

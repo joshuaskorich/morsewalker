@@ -460,13 +460,20 @@ export function respondWithAllStations(stations, audioLock) {
  * @returns {Array<Object>} The updated list of stations.
  */
 export function addStations(stations, inputs, chance) {
-  if (stations.length >= inputs.minStations && chance < 1.0 && Math.random() > chance) {
-    return stations
+  if (
+    stations.length >= inputs.minStations &&
+    chance < 1.0 &&
+    Math.random() > chance
+  ) {
+    return stations;
   }
   // If currentStations is too short, then add a weighted random between 1 and inputs.maxStations
   if (stations.length < inputs.maxStations) {
     // Use weightedRandom to determine the number of stations to add
-    let numStations = weightedRandom(inputs.minStations - stations.length, inputs.maxStations - stations.length);
+    let numStations = weightedRandom(
+      inputs.minStations - stations.length,
+      inputs.maxStations - stations.length
+    );
     console.log(`+ Adding ${numStations} stations...`);
     for (let i = 0; i < numStations; i++) {
       let callingStation = getCallingStation(getCurrentMode());
