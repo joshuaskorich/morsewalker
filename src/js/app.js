@@ -548,9 +548,10 @@ function send() {
     if (currentCharItem === null) return;
 
     if (
-      responseFieldText === '?' ||
-      responseFieldText === 'AGN' ||
-      responseFieldText === 'AGN?'
+      responseFieldText !== currentCharItem.answer.toUpperCase() &&
+      (responseFieldText === '?' ||
+        responseFieldText === 'AGN' ||
+        responseFieldText === 'AGN?')
     ) {
       let replayTime = currentCharItem.player.playSentence(
         currentCharItem.played,
@@ -1136,6 +1137,7 @@ function reset() {
   currentStations = [];
   activeStationIndex = null;
   readyForTU = false;
+  currentCharItem = null;
 
   updateActiveStations(0);
   updateAudioLock(0);

@@ -194,6 +194,11 @@ function validateInputs(inputs) {
       openAccordionSection('collapseCharRecognition');
       isValid = false;
     }
+    if (isNaN(inputs.maxChars) || inputs.maxChars < 1) {
+      markFieldInvalid('maxChars', 'Maximum Characters must be at least 1.');
+      openAccordionSection('collapseCharRecognition');
+      isValid = false;
+    }
     if (inputs.minChars > inputs.maxChars) {
       markFieldInvalid(
         'minChars',
