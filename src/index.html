@@ -111,27 +111,25 @@
             style="height: 1em; vertical-align: bottom"
           />
         </h1>
-        <button
-          type="button"
-          id="themeToggle"
-          class="btn btn-outline-secondary btn-sm ms-2"
-          aria-label="Toggle dark mode"
-          title="Toggle dark mode"
-        >
-          <i class="fa-solid fa-moon"></i>
-        </button>
-        <script>
-          // Set the correct icon before Font Awesome's first scan so a dark-mode
-          // visitor doesn't briefly see the moon icon before the bundle loads.
-          if (
-            document.documentElement.getAttribute('data-bs-theme') === 'dark'
-          ) {
-            document.getElementById('themeToggle').innerHTML =
-              '<i class="fa-solid fa-sun"></i>';
-          }
-        </script>
         <p class="fw-bold fst-italic">Walk before you run!</p>
       </div>
+      <button
+        type="button"
+        id="themeToggle"
+        class="btn btn-outline-secondary btn-sm ms-2"
+        aria-label="Toggle dark mode"
+        title="Toggle dark mode"
+      >
+        <i class="fa-solid fa-moon"></i>
+      </button>
+      <script>
+        // Set the correct icon before Font Awesome's first scan so a dark-mode
+        // visitor doesn't briefly see the moon icon before the bundle loads.
+        if (document.documentElement.getAttribute('data-bs-theme') === 'dark') {
+          document.getElementById('themeToggle').innerHTML =
+            '<i class="fa-solid fa-sun"></i>';
+        }
+      </script>
     </div>
 
     <hr />
@@ -1247,7 +1245,8 @@
     <footer class="bg-dark text-white text-center py-2 fixed-bottom">
       <span>
         A fork by
-        <a href="https://www.qrz.com/db/NT5F"><strong>NT5F</strong></a>,
+        <a href="https://www.qrz.com/db/NT5F"><strong>NT5F</strong></a
+        >,
         <a
           href="https://github.com/joshuaskorich/morsewalker"
           class="text-primary"
@@ -1255,12 +1254,11 @@
         >.
         <span class="d-none d-md-inline">
           Forked from the
-          <a
-            href="https://github.com/sc0tfree/morsewalker"
-            class="text-primary"
+          <a href="https://github.com/sc0tfree/morsewalker" class="text-primary"
             >original</a
           >
-          by <a href="https://www.qrz.com/db/W6NYC"><strong>W6NYC</strong></a>.
+          by <a href="https://www.qrz.com/db/W6NYC"><strong>W6NYC</strong></a
+          >.
         </span>
       </span>
     </footer>
