@@ -428,17 +428,15 @@ export function getRandomCharacterString(inputs) {
   return {
     played: played,
     answer: answer,
-    wpm:
-      Math.floor(Math.random() * (inputs.maxSpeed - inputs.minSpeed + 1)) +
-      inputs.minSpeed,
-    enableFarnsworth: inputs.enableFarnsworth,
-    farnsworthSpeed: inputs.farnsworthSpeed || null,
-    volume:
-      Math.random() * (inputs.maxVolume - inputs.minVolume) + inputs.minVolume,
-    frequency: Math.floor(
-      Math.random() * (inputs.maxTone - inputs.minTone) + inputs.minTone
-    ),
+    // Character Recognition uses its own fixed Speed/Tone controls (not the
+    // Responding Station ranges); volume is constant and Farnsworth is off.
+    wpm: inputs.charSpeed,
+    enableFarnsworth: false,
+    farnsworthSpeed: null,
+    volume: 1.0,
+    frequency: inputs.charTone,
     player: null,
+    // QSB (fading) still comes from the Effects settings, which stay visible.
     qsb: inputs.qsb ? Math.random() < inputs.qsbPercentage / 100 : false,
     qsbFrequency: Math.random() * 0.45 + 0.05,
     qsbDepth: Math.random() * 0.4 + 0.6,

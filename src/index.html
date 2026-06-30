@@ -1019,11 +1019,11 @@
       >
         <h2 class="accordion-header" id="headingCharRecognition">
           <button
-            class="accordion-button collapsed"
+            class="accordion-button"
             type="button"
             data-bs-toggle="collapse"
             data-bs-target="#collapseCharRecognition"
-            aria-expanded="false"
+            aria-expanded="true"
             aria-controls="collapseCharRecognition"
           >
             <h5>Character Recognition Settings</h5>
@@ -1031,7 +1031,7 @@
         </h2>
         <div
           id="collapseCharRecognition"
-          class="accordion-collapse collapse"
+          class="accordion-collapse collapse show"
           aria-labelledby="headingCharRecognition"
           data-bs-parent="#accordionExample"
         >
@@ -1119,6 +1119,36 @@
                     min="1"
                     max="10"
                     step="1"
+                    required
+                  />
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label for="charSpeed" class="form-label">Speed (WPM)</label>
+                  <input
+                    type="number"
+                    id="charSpeed"
+                    name="charSpeed"
+                    class="form-control"
+                    value="20"
+                    min="5"
+                    max="60"
+                    step="1"
+                    required
+                  />
+                </div>
+
+                <div class="col-12 col-md-6">
+                  <label for="charTone" class="form-label">Tone (Hz)</label>
+                  <input
+                    type="number"
+                    id="charTone"
+                    name="charTone"
+                    class="form-control"
+                    value="600"
+                    min="300"
+                    max="1000"
+                    step="10"
                     required
                   />
                 </div>

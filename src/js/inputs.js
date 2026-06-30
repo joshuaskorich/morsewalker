@@ -89,6 +89,8 @@ function getDOMInputs() {
     charProsigns: document.getElementById('charProsigns').checked,
     minChars: parseInt(document.getElementById('minChars').value, 10),
     maxChars: parseInt(document.getElementById('maxChars').value, 10),
+    charSpeed: parseInt(document.getElementById('charSpeed').value, 10),
+    charTone: parseInt(document.getElementById('charTone').value, 10),
   };
 }
 
@@ -114,7 +116,7 @@ function validateInputs(inputs) {
 
   clearAllInvalidStates();
 
-  if (!inputs.yourCallsign) {
+  if (!inputs.yourCallsign && inputs.mode !== 'char') {
     markFieldInvalid('yourCallsign', 'Your callsign is required.');
     openAccordionSection('collapseYourStationSettings');
     isValid = false;
@@ -204,6 +206,16 @@ function validateInputs(inputs) {
         'minChars',
         'Minimum Characters cannot be greater than Maximum Characters!'
       );
+      openAccordionSection('collapseCharRecognition');
+      isValid = false;
+    }
+    if (isNaN(inputs.charSpeed) || inputs.charSpeed < 5) {
+      markFieldInvalid('charSpeed', 'Speed must be at least 5 WPM.');
+      openAccordionSection('collapseCharRecognition');
+      isValid = false;
+    }
+    if (isNaN(inputs.charTone) || inputs.charTone < 100) {
+      markFieldInvalid('charTone', 'Tone must be at least 100 Hz.');
       openAccordionSection('collapseCharRecognition');
       isValid = false;
     }

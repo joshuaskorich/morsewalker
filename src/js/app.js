@@ -411,12 +411,32 @@ function applyModeSettings(mode) {
     header.textContent = config.extraColumnHeader || 'Additional Info';
   });
 
-  // Character Recognition: show its settings panel and relabel the identifier
-  // column only in char mode.
+  // Character Recognition: show its settings panel (moved to the top of the
+  // accordion) and relabel the identifier column only in char mode. The Your
+  // Station and Responding Station sections are irrelevant to the drill, so hide
+  // them in char mode (the drill's Speed/Tone live in the char panel).
+  const accordion = document.getElementById('accordionExample');
   const charSettings = document.getElementById('charRecognitionSettings');
   if (charSettings) {
     charSettings.style.display = mode === 'char' ? 'block' : 'none';
+    if (mode === 'char' && accordion && accordion.firstElementChild !== charSettings) {
+      accordion.prepend(charSettings);
+    }
   }
+
+  const yourStationItem = document
+    .getElementById('headingYourStation')
+    ?.closest('.accordion-item');
+  const respondingItem = document
+    .getElementById('headingRespondingStationSettings')
+    ?.closest('.accordion-item');
+  if (yourStationItem) {
+    yourStationItem.style.display = mode === 'char' ? 'none' : '';
+  }
+  if (respondingItem) {
+    respondingItem.style.display = mode === 'char' ? 'none' : '';
+  }
+
   const identifierHeader = document.getElementById('resultsIdentifierHeader');
   if (identifierHeader) {
     identifierHeader.textContent = mode === 'char' ? 'String' : 'Callsign';
