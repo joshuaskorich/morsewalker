@@ -601,7 +601,8 @@ function send() {
       totalContacts,
       currentCharItem.answer,
       wpmString,
-      currentStationAttempts,
+      // Attempts = the initial listen (1) plus any replays (? / AGN).
+      currentStationAttempts + 1,
       '',
       audioContext.currentTime - currentStationStartTime,
       marker
