@@ -516,10 +516,13 @@
                     id="enableFarnsworth"
                     autocomplete="off"
                     onchange="
-                   document.getElementById('enableFarnsworthLabel').innerHTML =
-                     `<i class='${this.checked ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle-xmark'} me-2'></i>Farnsworth`;
-                   document.getElementById('farnsworthSpeed').disabled = !this.checked;
-                 "
+                      document.getElementById(
+                        'enableFarnsworthLabel'
+                      ).innerHTML =
+                        `<i class='${this.checked ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle-xmark'} me-2'></i>Farnsworth`;
+                      document.getElementById('farnsworthSpeed').disabled =
+                        !this.checked;
+                    "
                   />
                   <label
                     class="btn btn-outline-primary w-100"
@@ -659,9 +662,9 @@
                     id="usOnly"
                     checked
                     onchange="
-                   document.getElementById('usOnlyLabel').innerHTML =
-                     `<i class='${this.checked ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle-xmark'} me-2'></i>US Only Callsigns`;
-                 "
+                      document.getElementById('usOnlyLabel').innerHTML =
+                        `<i class='${this.checked ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle-xmark'} me-2'></i>US Only Callsigns`
+                    "
                   />
                   <label
                     class="btn btn-outline-primary w-100"
@@ -749,9 +752,12 @@
                     class="btn-check"
                     autocomplete="off"
                     id="enableCutNumbers"
-                    onchange="document.getElementById('enableCutNumbersLabel').innerHTML =
-                            `<i class='${this.checked ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle-xmark'} me-2'></i>Enable Cut Numbers`;
-                            "
+                    onchange="
+                      document.getElementById(
+                        'enableCutNumbersLabel'
+                      ).innerHTML =
+                        `<i class='${this.checked ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle-xmark'} me-2'></i>Enable Cut Numbers`
+                    "
                   />
                   <label
                     class="btn btn-outline-primary w-100"
@@ -972,10 +978,11 @@
                         id="qsb"
                         autocomplete="off"
                         onchange="
-                         document.getElementById('qsbLabel').innerHTML =
-                           `<i class='${this.checked ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle-xmark'} me-2'></i>QSB (Fading)`;
-                         document.getElementById('qsbPercentage').disabled = !this.checked;
-                       "
+                          document.getElementById('qsbLabel').innerHTML =
+                            `<i class='${this.checked ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle-xmark'} me-2'></i>QSB (Fading)`;
+                          document.getElementById('qsbPercentage').disabled =
+                            !this.checked;
+                        "
                       />
                       <label
                         class="btn btn-outline-primary w-100"
@@ -1000,7 +1007,10 @@
                         max="100"
                         value="50"
                         disabled
-                        oninput="document.getElementById('qsbValue').textContent = this.value + '%';"
+                        oninput="
+                          document.getElementById('qsbValue').textContent =
+                            this.value + '%'
+                        "
                       />
                     </div>
                   </div>
