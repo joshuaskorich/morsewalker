@@ -419,7 +419,11 @@ function applyModeSettings(mode) {
   const charSettings = document.getElementById('charRecognitionSettings');
   if (charSettings) {
     charSettings.style.display = mode === 'char' ? 'block' : 'none';
-    if (mode === 'char' && accordion && accordion.firstElementChild !== charSettings) {
+    if (
+      mode === 'char' &&
+      accordion &&
+      accordion.firstElementChild !== charSettings
+    ) {
       accordion.prepend(charSettings);
     }
   }
