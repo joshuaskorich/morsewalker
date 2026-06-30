@@ -362,6 +362,87 @@ export function getYourStation() {
   };
 }
 
+// Character sets for Character Recognition mode. Each pool entry has a `play`
+// form (fed to the morse engine; prosigns are bracketed so they key off the
+// engine's prosign map) and an `answer` form (what the user types; prosigns are
+// plain letter pairs).
+const CHAR_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+const CHAR_NUMBERS = '0123456789'.split('');
+const CHAR_PUNCTUATION = ['.', ',', '?', '/'];
+const CHAR_PROSIGNS = [
+  { play: '<BK>', answer: 'BK' },
+  { play: '<AR>', answer: 'AR' },
+  { play: '<SK>', answer: 'SK' },
+  { play: '<KN>', answer: 'KN' },
+  { play: '<BT>', answer: 'BT' },
+];
+
+/**
+ * Builds the pool of selectable characters for Character Recognition mode from
+ * the enabled character-set toggles. Returns an array of { play, answer } items.
+ *
+ * @param {Object} inputs - Validated inputs from getInputs().
+ * @returns {Array<{play: string, answer: string}>}
+ */
+function buildCharPool(inputs) {
+  const pool = [];
+  if (inputs.charLetters) {
+    CHAR_LETTERS.forEach((c) => pool.push({ play: c, answer: c }));
+  }
+  if (inputs.charNumbers) {
+    CHAR_NUMBERS.forEach((c) => pool.push({ play: c, answer: c }));
+  }
+  if (inputs.charPunctuation) {
+    CHAR_PUNCTUATION.forEach((c) => pool.push({ play: c, answer: c }));
+  }
+  if (inputs.charProsigns) {
+    CHAR_PROSIGNS.forEach((p) => pool.push({ play: p.play, answer: p.answer }));
+  }
+  return pool;
+}
+
+/**
+ * Generates a random character string for Character Recognition mode and returns
+ * a station-like object playable by createMorsePlayer. The audio fields mirror
+ * getCallingStation so playback uses the existing Calling Station settings.
+ *
+ * @param {Object} inputs - Validated inputs from getInputs(). At least one
+ *   character set must be enabled (guaranteed by validateInputs).
+ * @returns {Object} { played, answer, wpm, ...audio fields }
+ */
+export function getRandomCharacterString(inputs) {
+  const pool = buildCharPool(inputs);
+
+  const length =
+    Math.floor(Math.random() * (inputs.maxChars - inputs.minChars + 1)) +
+    inputs.minChars;
+
+  let played = '';
+  let answer = '';
+  for (let i = 0; i < length; i++) {
+    const item = pool[Math.floor(Math.random() * pool.length)];
+    played += item.play;
+    answer += item.answer;
+  }
+
+  return {
+    played: played,
+    answer: answer,
+    // Character Recognition uses its own fixed Speed/Tone controls (not the
+    // Responding Station ranges); volume is constant and Farnsworth is off.
+    wpm: inputs.charSpeed,
+    enableFarnsworth: false,
+    farnsworthSpeed: null,
+    volume: 1.0,
+    frequency: inputs.charTone,
+    player: null,
+    // QSB (fading) still comes from the Effects settings, which stay visible.
+    qsb: inputs.qsb ? Math.random() < inputs.qsbPercentage / 100 : false,
+    qsbFrequency: Math.random() * 0.45 + 0.05,
+    qsbDepth: Math.random() * 0.4 + 0.6,
+  };
+}
+
 /**
  * Generates a random calling station configuration.
  *

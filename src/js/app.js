@@ -29,7 +29,11 @@ import {
   updateActiveStations,
   printStation,
 } from './util.js';
-import { getYourStation, getCallingStation } from './stationGenerator.js';
+import {
+  getYourStation,
+  getCallingStation,
+  getRandomCharacterString,
+} from './stationGenerator.js';
 import { updateStaticIntensity } from './audio.js';
 import { modeLogicConfig, modeUIConfig } from './modes.js';
 
@@ -60,6 +64,7 @@ let currentStationStartTime = null;
 let totalContacts = 0;
 let yourStation = null;
 let lastRespondingStations = null;
+let currentCharItem = null;
 const farnsworthLowerBy = 6;
 
 /**
@@ -405,6 +410,41 @@ function applyModeSettings(mode) {
   extraColumnHeaders.forEach((header) => {
     header.textContent = config.extraColumnHeader || 'Additional Info';
   });
+
+  // Character Recognition: show its settings panel (moved to the top of the
+  // accordion) and relabel the identifier column only in char mode. The Your
+  // Station and Responding Station sections are irrelevant to the drill, so hide
+  // them in char mode (the drill's Speed/Tone live in the char panel).
+  const accordion = document.getElementById('accordionExample');
+  const charSettings = document.getElementById('charRecognitionSettings');
+  if (charSettings) {
+    charSettings.style.display = mode === 'char' ? 'block' : 'none';
+    if (
+      mode === 'char' &&
+      accordion &&
+      accordion.firstElementChild !== charSettings
+    ) {
+      accordion.prepend(charSettings);
+    }
+  }
+
+  const yourStationItem = document
+    .getElementById('headingYourStation')
+    ?.closest('.accordion-item');
+  const respondingItem = document
+    .getElementById('headingRespondingStationSettings')
+    ?.closest('.accordion-item');
+  if (yourStationItem) {
+    yourStationItem.style.display = mode === 'char' ? 'none' : '';
+  }
+  if (respondingItem) {
+    respondingItem.style.display = mode === 'char' ? 'none' : '';
+  }
+
+  const identifierHeader = document.getElementById('resultsIdentifierHeader');
+  if (identifierHeader) {
+    identifierHeader.textContent = mode === 'char' ? 'String' : 'Callsign';
+  }
 }
 
 /**
@@ -421,6 +461,7 @@ function resetGameState() {
   currentStationAttempts = 0;
   currentStationStartTime = null;
   totalContacts = 0;
+  currentCharItem = null;
 
   updateActiveStations(0);
   clearTable('resultsTable');
@@ -461,6 +502,11 @@ function cq() {
 
   const modeConfig = getModeConfig();
   const cqButton = document.getElementById('cqButton');
+
+  if (currentMode === 'char') {
+    startCharDrill();
+    return;
+  }
 
   if (!modeConfig.showTuStep && currentStation !== null) {
     return;
@@ -519,6 +565,49 @@ function send() {
     if (currentStations.length === 0) {
       cq();
     }
+    return;
+  }
+
+  if (currentMode === 'char') {
+    if (currentCharItem === null) return;
+
+    if (
+      responseFieldText !== currentCharItem.answer.toUpperCase() &&
+      (responseFieldText === '?' ||
+        responseFieldText === 'AGN' ||
+        responseFieldText === 'AGN?')
+    ) {
+      let replayTime = currentCharItem.player.playSentence(
+        currentCharItem.played,
+        audioContext.currentTime + 0.25
+      );
+      updateAudioLock(replayTime);
+      currentStationAttempts++;
+      return;
+    }
+
+    const correct = responseFieldText === currentCharItem.answer.toUpperCase();
+    totalContacts++;
+    const wpmString =
+      `${currentCharItem.wpm}` +
+      (currentCharItem.enableFarnsworth
+        ? ` / ${currentCharItem.farnsworthSpeed}`
+        : '');
+    const marker = correct
+      ? `<span class="text-success">&#10003; ${responseFieldText}</span>`
+      : `<span class="text-danger">&#10007; ${responseFieldText}</span>`;
+    addTableRow(
+      'resultsTable',
+      totalContacts,
+      currentCharItem.answer,
+      wpmString,
+      currentStationAttempts,
+      '',
+      audioContext.currentTime - currentStationStartTime,
+      marker
+    );
+
+    nextCharString(audioContext.currentTime + 1);
     return;
   }
 
@@ -990,6 +1079,53 @@ function nextSingleStation(responseStartTime) {
 }
 
 /**
+ * Starts the Character Recognition drill: validates inputs, ensures background
+ * static, disables CQ, and plays the first random string.
+ */
+function startCharDrill() {
+  let backgroundStaticDelay = 0;
+  if (!isBackgroundStaticPlaying()) {
+    createBackgroundStatic();
+    backgroundStaticDelay = 2;
+  }
+  if (getInputs() === null) return; // validateInputs marks the offending field
+  document.getElementById('cqButton').disabled = true;
+  nextCharString(audioContext.currentTime + backgroundStaticDelay);
+}
+
+/**
+ * Generates and plays the next random character string in the drill, then focuses
+ * the response field. Re-reads inputs each time so mid-drill setting changes apply
+ * (and an invalid change stops the drill gracefully).
+ *
+ * @param {number} responseStartTime - AudioContext time to begin playback.
+ */
+function nextCharString(responseStartTime) {
+  const responseField = document.getElementById('responseField');
+  inputs = getInputs();
+  if (inputs === null) {
+    document.getElementById('cqButton').disabled = false;
+    return;
+  }
+
+  let item = getRandomCharacterString(inputs);
+  item.player = createMorsePlayer(item);
+  currentCharItem = item;
+  currentStationAttempts = 0;
+  updateActiveStations(1);
+
+  let endTime = item.player.playSentence(
+    item.played,
+    responseStartTime + Math.random() + 1
+  );
+  updateAudioLock(endTime);
+
+  currentStationStartTime = endTime;
+  responseField.value = '';
+  responseField.focus();
+}
+
+/**
  * Stops all audio playback and resets the CQ button.
  *
  * Clears the game state for single mode, ensuring no active station remains.
@@ -1025,6 +1161,7 @@ function reset() {
   currentStations = [];
   activeStationIndex = null;
   readyForTU = false;
+  currentCharItem = null;
 
   updateActiveStations(0);
   updateAudioLock(0);
