@@ -144,6 +144,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // iOS audio hint: iOS routes Web Audio through the ringer channel, so the
+  // Silent switch mutes it. Show a dismissible note on iOS, remembered once
+  // dismissed.
+  const iosAudioHint = document.getElementById('iosAudioHint');
+  if (iosAudioHint) {
+    const isIOS =
+      /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    let hintDismissed = false;
+    try {
+      hintDismissed = localStorage.getItem('iosAudioHintDismissed') === 'true';
+    } catch (e) {
+      // Storage can be blocked; just show the hint.
+    }
+    if (isIOS && !hintDismissed) {
+      iosAudioHint.classList.remove('d-none');
+    }
+    iosAudioHint.addEventListener('closed.bs.alert', () => {
+      try {
+        localStorage.setItem('iosAudioHintDismissed', 'true');
+      } catch (e) {
+        // Storage can be blocked; the hint simply reappears next visit.
+      }
+    });
+  }
+
   modeRadios.forEach((radio) => {
     radio.addEventListener('change', changeMode);
   });
